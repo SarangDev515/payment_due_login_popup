@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+      <t t-name="payment_due_login_popup.PaymentDueDialog">
+                <Dialog title="props.title" size="'xl'" contentClass="'payment_due_login_popup'" footer="false">
+                              <t t-set-slot="header">
+                                                <div class="d-flex align-items-center w-100">
+                                                                      <h4 class="modal-title text-break flex-grow-1 mb-0">
+                                                                                                <t t-esc="props.title"/>
+                                                                      </h4>
+                                                                      <div class="d-flex align-items-center gap-1 ms-2">
+                                                                                                <button
+                                                                                                                              type="button"
+                                                                                                                              class="btn btn-sm btn-outline-secondary payment_due_minimize_button"
+                                                                                                                              aria-label="Minimize payments due popup"
+                                                                                                                              data-tooltip="Minimize"
+                                                                                                                              t-on-click="() => this.minimize()"
+                                                                                                                          >
+                                                                                                                              <i class="fa fa-window-minimize" aria-hidden="true"/>
+                                                                                                  </button>
+                                                                                                <button
+                                                                                                                              type="button"
+                                                                                                                              class="btn-close"
+                                                                                                                              aria-label="Close payments due popup"
+                                                                                                                              t-on-click="() => props.close()"
+                                                                                                                          />
+                                                                      </div>
+                                                </div>
+                              </t>
+
+                              <div class="payment_due_popup_content">
+                                                <div class="alert alert-warning d-flex align-items-start gap-2 mb-3" role="alert">
+                                                                      <i class="fa fa-exclamation-triangle mt-1" aria-hidden="true"/>
+                                                                      <div>
+                                                                                                <strong>
+                                                                                                                              <t t-esc="props.data.total_count"/> payment(s) are due.
+                                                                                                  </strong>
+                                                                                                <div class="small text-muted">
+                                                                                                                              Please review the outstanding sales invoices and purchase bills below.
+                                                                                                                              Amounts are shown in each document's currency.
+                                                                                                  </div>
+                                                                      </div>
+                                                </div>
+
+                                                <t t-if="props.data.sales.length">
+                                                                      <section class="mb-4">
+                                                                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                                                                                              <h6 class="mb-0 text-uppercase text-muted">
+                                                                                                                                                                <i class="fa fa-arrow-circle-down me-1 text-success" aria-hidden="true"/>
+                                                                                                                                                                Sales invoices
+                                                                                                                                                                <span class="badge rounded-pill text-bg-success ms-1">
+                                                                                                                                                                                                      <t t-esc="props.data.sales.length"/>
+                                                                                                                                                                  </span>
+                                                                                                                                </h6>
+                                                                                                  </div>
+                                                                                                <div class="table-responsive payment_due_popup_table">
+                                                                                                                              <table class="table table-sm table-hover align-middle mb-0">
+                                                                                                                                                                <thead>
+                                                                                                                                                                                                      <tr>
+                                                                                                                                                                                                                                                <th>Invoice</th>
+                                                                                                                                                                                                                                                <th>Customer</th>
+                                                                                                                                                                                                                                                <th>Company</th>
+                                                                                                                                                                                                                                                <th>Due date</th>
+                                                                                                                                                                                                                                                <th>Status</th>
+                                                                                                                                                                                                                                                <th class="text-end">Amount due</th>
+                                                                                                                                                                                                                                                <th class="text-end"/>
+                                                                                                                                                                                                                                            </tr>
+                                                                                                                                                                  </thead>
+                                                                                                                                                                <tbody>
+                                                                                                                                                                                                      <t t-foreach="props.data.sales" t-as="item" t-key="item.id">
+                                                                                                                                                                                                                                                <tr>
+                                                                                                                                                                                                                                                                                              <td class="fw-semibold text-nowrap">
+                                                                                                                                                                                                                                                                                                                                                <t t-esc="item.number"/>
+                                                                                                                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                                                                              <td><t t-esc="item.partner"/></td>
+                                                                                                                                                                                                                                                                                              <td><t t-esc="item.company"/></td>
+                                                                                                                                                                                                                                                                                              <td class="text-danger fw-semibold text-nowrap">
+                                                                                                                                                                                                                                                                                                                                                <t t-esc="item.due_date"/>
+                                                                                                                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                                                                              <td>
+                                                                                                                                                                                                                                                                                                                                                <span class="badge rounded-pill text-bg-danger">
+                                                                                                                                                                                                                                                                                                                                                                                                      <t t-esc="item.payment_state_label"/>
+                                                                                                                                                                                                                                                                                                                                                                                                  </span>
+                                                                                                                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                                                                              <td class="text-end fw-semibold text-nowrap">
+                                                                                                                                                                                                                                                                                                                                                <t t-esc="item.amount_due"/>
+                                                                                                                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                                                                              <td class="text-end">
+                                                                                                                                                                                                                                                                                                                                                <button
+                                                                                                                                                                                                                                                                                                                                                                                                      type="button"
+                                                                                                                                                                                                                                                                                                                                                                                                      class="btn btn-sm btn-outline-primary"
+                                                                                                                                                                                                                                                                                                                                                                                                      t-on-click="() => this.openMove(item)"
+                                                                                                                                                                                                                                                                                                                                                                                                  >
+                                                                                                                                                                                                                                                                                                                                                                                                      Open
+                                                                                                                                                                                                                                                                                                                                                                                                  </button>
+                                                                                                                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                                                                          </tr>
+                                                                                                                                                                                                                                            </t>
+                                                                                                                                                                  </tbody>
+                                                                                                                                </table>
+                                                                                                  </div>
+                                                                      </section>
+                                                </t>
+
+                                                <t t-if="props.data.purchases.length">
+                                                                      <section>
+                                                                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                                                                                              <h6 class="mb-0 text-uppercase text-muted">
+                                                                                                                                                                <i class="fa fa-arrow-circle-up me-1 text-primary" aria-hidden="true"/>
+                                                                                                                                                                Purchase bills
+                                                                                                                                                                <span class="badge rounded-pill text-bg-primary ms-1">
+                                                                                                                                                                                                      <t t-esc="props.data.purchases.length"/>
+                                                                                                                                                                  </span>
+                                                                                                                                </h6>
+                                                                                                  </div>
+                                                                                                <div class="table-responsive payment_due_popup_table">
+                                                                                                                              <table class="table table-sm table-hover align-middle mb-0">
+                                                                                                                                                                <thead>
+                                                                                                                                                                                                      <tr>
+                                                                                                                                                                                                                                                <th>Bill</th>
+                                                                                                                                                                                                                                                <th>Vendor</th>
+                                                                                                                                                                                                                                                <th>Company</th>
+                                                                                                                                                                                                                                                <th>Due date</th>
+                                                                                                                                                                                                                                                <th>Status</th>
+                                                                                                                                                                                                                                                <th class="text-end">Amount due</th>
+                                                                                                                                                                                                                                                <th class="text-end"/>
+                                                                                                                                                                                                                                            </tr>
+                                                                                                                                                                  </thead>
+                                                                                                                                                                <tbody>
+                                                                                                                                                                                                      <t t-foreach="props.data.purchases" t-as="item" t-key="item.id">
+                                                                                                                                                                                                                                                <tr>
+                                                                                                                                                                                                                                                                                              <td class="fw-semibold text-nowrap">
+                                                                                                                                                                                                                                                                                                                                                <t t-esc="item.number"/>
+                                                                                                                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                                                                              <td><t t-esc="item.partner"/></td>
+                                                                                                                                                                                                                                                                                              <td><t t-esc="item.company"/></td>
+                                                                                                                                                                                                                                                                                              <td class="text-danger fw-semibold text-nowrap">
+                                                                                                                                                                                                                                                                                                                                                <t t-esc="item.due_date"/>
+                                                                                                                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                                                                              <td>
+                                                                                                                                                                                                                                                                                                                                                <span class="badge rounded-pill text-bg-primary">
+                                                                                                                                                                                                                                                                                                                                                                                                      <t t-esc="item.payment_state_label"/>
+                                                                                                                                                                                                                                                                                                                                                                                                  </span>
+                                                                                                                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                                                                              <td class="text-end fw-semibold text-nowrap">
+                                                                                                                                                                                                                                                                                                                                                <t t-esc="item.amount_due"/>
+                                                                                                                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                                                                              <td class="text-end">
+                                                                                                                                                                                                                                                                                                                                                <button
+                                                                                                                                                                                                                                                                                                                                                                                                      type="button"
+                                                                                                                                                                                                                                                                                                                                                                                                      class="btn btn-sm btn-outline-primary"
+                                                                                                                                                                                                                                                                                                                                                                                                      t-on-click="() => this.openMove(item)"
+                                                                                                                                                                                                                                                                                                                                                                                                  >
+                                                                                                                                                                                                                                                                                                                                                                                                      Open
+                                                                                                                                                                                                                                                                                                                                                                                                  </button>
+                                                                                                                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                                                                          </tr>
+                                                                                                                                                                                                                                            </t>
+                                                                                                                                                                  </tbody>
+                                                                                                                                </table>
+                                                                                                  </div>
+                                                                      </section>
+                                                </t>
+                              </div>
+                </Dialog>
+      </t>
+
+      <t t-name="payment_due_login_popup.PaymentDueMinibox">
+                <div
+                              t-if="props.state.minimized and props.state.data"
+                              class="payment_due_minibox"
+                              role="status"
+                              aria-live="polite"
+                          >
+                              <button
+                                                type="button"
+                                                class="payment_due_minibox_restore"
+                                                t-on-click="() => props.restore()"
+                                                aria-label="Restore payments due popup"
+                                                data-tooltip="Restore payments due popup"
+                                            >
+                                                <i class="fa fa-bell-o me-2" aria-hidden="true"/>
+                                                <span>Payments Due</span>
+                                                <span class="badge rounded-pill text-bg-danger ms-2">
+                                                                      <t t-esc="props.state.data.total_count"/>
+                                                </span>
+                              </button>
+                              <button
+                                                type="button"
+                                                class="payment_due_minibox_close"
+                                                t-on-click="() => props.close()"
+                                                aria-label="Close payments due reminder"
+                                                data-tooltip="Close"
+                                            >
+                                                <i class="fa fa-times" aria-hidden="true"/>
+                              </button>
+                </div>
+      </t>
+</templates>
